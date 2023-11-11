@@ -1,22 +1,19 @@
 import React, {useEffect} from 'react';
-import {Button, Dialog} from 'react-native-paper';
-import useColors from '@/hooks/useColors';
 import Loading from '@/components/base/loading';
 import rpx from '@/utils/rpx';
 import {StyleSheet} from 'react-native';
-import useDialog from '../useDialog';
+import {hideDialog} from '../useDialog';
+import Dialog from './base';
 
-interface ISimpleDialogProps<T extends any = any> {
+interface ILoadingDialogProps<T extends any = any> {
     promise: Promise<T>;
     title: string;
     onResolve?: (data: T, hideDialog: () => void) => void;
     onReject?: (reason: any, hideDialog: () => void) => void;
     onCancel?: (hideDialog: () => void) => void;
 }
-export default function LoadingDialog(props: ISimpleDialogProps) {
+export default function LoadingDialog(props: ILoadingDialogProps) {
     const {title, onResolve, onReject, promise, onCancel} = props;
-    const colors = useColors();
-    const {hideDialog} = useDialog();
 
     useEffect(() => {
         promise
@@ -29,23 +26,21 @@ export default function LoadingDialog(props: ISimpleDialogProps) {
     }, []);
 
     return (
-        <Dialog
-            visible={true}
-            onDismiss={hideDialog}
-            style={{backgroundColor: colors.primary}}>
+        <Dialog onDismiss={hideDialog}>
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Content style={style.content}>
                 <Loading text="扫描中..." />
             </Dialog.Content>
-            <Dialog.Actions>
-                <Button
-                    color={colors.text}
-                    onPress={() => {
-                        onCancel?.(hideDialog);
-                    }}>
-                    取消
-                </Button>
-            </Dialog.Actions>
+            <Dialog.Actions
+                actions={[
+                    {
+                        title: '取消',
+                        onPress() {
+                            onCancel?.(hideDialog);
+                        },
+                    },
+                ]}
+            />
         </Dialog>
     );
 }
@@ -53,5 +48,9 @@ export default function LoadingDialog(props: ISimpleDialogProps) {
 const style = StyleSheet.create({
     content: {
         height: rpx(280),
+    },
+    cancelBtn: {
+        marginRight: rpx(12),
+        marginBottom: rpx(4),
     },
 });

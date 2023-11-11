@@ -4,9 +4,10 @@ import rpx from '@/utils/rpx';
 import globalStyle from '@/constants/globalStyle';
 import {ScrollView} from 'react-native-gesture-handler';
 import TypeTag from '../../../../components/base/typeTag';
-import usePanel from '@/components/panels/usePanel';
+
 import useRecommendList from '../../hooks/useRecommendListTags';
 import SheetList from './sheetList';
+import {showPanel, hidePanel} from '@/components/panels/usePanel';
 
 interface IProps {
     hash: string;
@@ -28,13 +29,12 @@ function SheetBody(props: IProps) {
     // 所有tag
     const tags = useRecommendList(hash);
 
-    const {showPanel, hidePanel} = usePanel();
-
     return (
         <View style={globalStyle.fwflex1}>
             <ScrollView
                 style={style.headerWrapper}
                 contentContainerStyle={style.header}
+                showsHorizontalScrollIndicator={false}
                 horizontal>
                 <TypeTag
                     title={firstTag.title}

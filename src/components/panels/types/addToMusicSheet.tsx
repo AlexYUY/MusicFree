@@ -6,10 +6,11 @@ import ListItem from '@/components/base/listItem';
 import MusicSheet from '@/core/musicSheet';
 import {ImgAsset} from '@/constants/assetsConst';
 import Toast from '@/utils/toast';
-import usePanel from '../usePanel';
+
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import PanelBase from '../base/panelBase';
 import {FlatList} from 'react-native-gesture-handler';
+import {showPanel, hidePanel} from '../usePanel';
 
 interface IAddToMusicSheetProps {
     musicItem: IMusic.IMusicItem | IMusic.IMusicItem[];
@@ -19,7 +20,7 @@ interface IAddToMusicSheetProps {
 
 export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
     const sheets = MusicSheet.useSheets();
-    const {showPanel, hidePanel} = usePanel();
+
     const {musicItem = [], newSheetDefaultName} = props ?? {};
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -32,13 +33,13 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             添加到歌单
                             <ThemeText
                                 fontSize="subTitle"
-                                fontColor="secondary">
+                                fontColor="textSecondary">
                                 {' '}
                                 (
                                 {Array.isArray(musicItem)
                                     ? musicItem.length
                                     : 1}
-                                )
+                                首)
                             </ThemeText>
                         </ThemeText>
                     </View>
@@ -51,11 +52,8 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                             }}
                             ListHeaderComponent={
                                 <ListItem
+                                    withHorizonalPadding
                                     key="new"
-                                    title="新建歌单"
-                                    left={{
-                                        fallback: ImgAsset.add,
-                                    }}
                                     onPress={() => {
                                         showPanel('NewMusicSheet', {
                                             defaultName: newSheetDefaultName,
@@ -81,17 +79,17 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                                 });
                                             },
                                         });
-                                    }}
-                                />
+                                    }}>
+                                    <ListItem.ListItemImage
+                                        fallbackImg={ImgAsset.add}
+                                    />
+                                    <ListItem.Content title="新建歌单" />
+                                </ListItem>
                             }
                             renderItem={({item: sheet}) => (
                                 <ListItem
+                                    withHorizonalPadding
                                     key={`${sheet.id}`}
-                                    title={sheet.title}
-                                    left={{
-                                        artwork: sheet.coverImg,
-                                        fallback: ImgAsset.albumDefault,
-                                    }}
                                     onPress={async () => {
                                         try {
                                             await MusicSheet.addMusic(
@@ -103,9 +101,18 @@ export default function AddToMusicSheet(props: IAddToMusicSheetProps) {
                                         } catch {
                                             Toast.warn('添加到歌单失败');
                                         }
-                                    }}
-                                    desc={`${sheet.musicList.length ?? '-'}首`}
-                                />
+                                    }}>
+                                    <ListItem.ListItemImage
+                                        uri={sheet.coverImg}
+                                        fallbackImg={ImgAsset.albumDefault}
+                                    />
+                                    <ListItem.Content
+                                        title={sheet.title}
+                                        description={`${
+                                            sheet.musicList.length ?? '-'
+                                        }首`}
+                                    />
+                                </ListItem>
                             )}
                         />
                     </View>

@@ -10,9 +10,10 @@ import {editingMusicListAtom, musicListChangedAtom} from '../store/atom';
 import MusicQueue from '@/core/musicQueue';
 import Toast from '@/utils/toast';
 import Download from '@/core/download';
-import usePanel from '@/components/panels/usePanel';
+
 import produce from 'immer';
 import {useParams} from '@/entry/router';
+import {showPanel} from '@/components/panels/usePanel';
 
 export default function Bottom() {
     const {musicSheet} = useParams<'music-list-editor'>();
@@ -39,7 +40,6 @@ export default function Bottom() {
         );
     }
 
-    const {showPanel} = usePanel();
     return (
         <View style={style.wrapper}>
             <BottomIcon
@@ -110,19 +110,18 @@ function BottomIcon(props: IBottomIconProps) {
     return (
         <Pressable
             onPress={onPress}
-            style={[
-                style.bottomIconWrapper,
-                {backgroundColor: colors.primary},
-            ]}>
+            style={[style.bottomIconWrapper, {backgroundColor: colors.appBar}]}>
             <Icon
                 name={icon}
-                color={colors[color]}
+                color={colors.appBarText}
+                style={color === 'textSecondary' ? {opacity: 0.6} : undefined}
                 size={iconSizeConst.big}
                 onPress={onPress}
             />
             <ThemeText
                 fontSize="subTitle"
-                fontColor={color === 'text' ? 'normal' : 'secondary'}
+                fontColor={'appBarText'}
+                opacity={color === 'textSecondary' ? 0.6 : undefined}
                 style={style.bottomIconText}>
                 {title}
             </ThemeText>
